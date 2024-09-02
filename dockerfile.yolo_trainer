@@ -1,0 +1,25 @@
+FROM 192.168.14.120:5000/pytorch:2.4.0-cuda12.4-cudnn9-runtime
+
+ENV APP_HOME /home/appuser/yolo_trainer
+RUN mkdir -p $APP_HOME
+
+WORKDIR $APP_HOME
+
+# 将原镜像地址替换为腾讯云镜像地址
+RUN sed -i 's/archive.ubuntu.com/mirrors.cloud.tencent.com/g' /etc/apt/sources.list
+RUN sed -i 's/security.ubuntu.com/mirrors.cloud.tencent.com/g' /etc/apt/sources.list
+RUN apt update && apt install --no-install-recommends -y build-essential ffmpeg &&\
+    apt clean && apt autoremove && rm -rf /var/lib/apt/lists/*
+
+# 换源并更新pip
+RUN pip config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/
+RUN pip install --upgrade pip
+RUN pip install --no-cache ultralytics
+
+COPY *.ttf /root/.config/Ultralytics/
+
+# Automatic Mixed Precision (AMP) check
+COPY yolov8n.pt $APP_HOME
+
+
+# docker build --pull --rm -f "dockerfile.yolo_trainer" -t yolo_trainer:2.4.0-cuda12.4-cudnn9-runtime "."
