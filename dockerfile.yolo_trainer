@@ -1,4 +1,4 @@
-FROM 192.168.14.120:5000/pytorch:2.4.0-cuda12.4-cudnn9-runtime
+FROM pytorch/pytorch:2.4.0-cuda12.4-cudnn9-runtime
 
 ENV APP_HOME /home/appuser/yolo_trainer
 RUN mkdir -p $APP_HOME
@@ -19,7 +19,7 @@ RUN pip install --no-cache ultralytics
 COPY *.ttf /root/.config/Ultralytics/
 
 # Automatic Mixed Precision (AMP) check
-COPY yolov8n.pt $APP_HOME
+COPY yolov8n.pt yolo11n.pt $APP_HOME
 
 
 # docker build --pull --rm -f "dockerfile.yolo_trainer" -t yolo_trainer:2.4.0-cuda12.4-cudnn9-runtime "."
